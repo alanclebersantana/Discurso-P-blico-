@@ -3,18 +3,19 @@
    plano. Suba uma versão nova do CACHE_NOME sempre que trocar arquivos
    estáticos (index.html, ícones) para forçar os aparelhos a atualizarem. */
 
-const CACHE_NOME = 'discursos-v1';
+const CACHE_NOME = 'discursos-v2';
 const ARQUIVOS = [
   './',
   './index.html',
+  './instalar/index.html',
   './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-maskable-192.png',
-  './icons/icon-maskable-512.png',
-  './icons/apple-touch-icon.png',
-  './icons/favicon-32.png',
-  './icons/favicon-16.png'
+  './icon-192.png',
+  './icon-512.png',
+  './icon-maskable-192.png',
+  './icon-maskable-512.png',
+  './apple-touch-icon.png',
+  './favicon-32.png',
+  './favicon-16.png'
 ];
 
 self.addEventListener('install', event => {

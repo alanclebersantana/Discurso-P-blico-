@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#C1561A">
+<title>Instalar · Discursos Públicos</title>
+
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="../favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Discursos">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ac:193,86,26; --bg:#F1F2F0; --sup:#E3E5E1; --card:#FFFFFF;
+  --ink:#14181B; --mut:#6A737A; --line:#D5D8D2; --soft:#EAECE8;
+  --ff:'Nunito'; --fd:'Caveat';
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--ff),system-ui,sans-serif;
+  line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:40px;
+}
+.wrap{max-width:520px;margin:0 auto;padding:0 20px}
+
+header{padding:22px 20px 10px;text-align:center}
+header .selo{width:76px;height:76px;border-radius:22px;margin:0 auto 12px;display:block;box-shadow:0 4px 16px rgba(20,24,27,.12)}
+header h1{font-family:var(--fd),cursive;font-size:2.1em;font-weight:700}
+header h1 b{color:rgb(var(--ac))}
+header p{color:var(--mut);font-size:.95em;margin-top:6px;max-width:340px;margin-left:auto;margin-right:auto}
+
+.acoes{display:flex;flex-direction:column;gap:10px;margin:20px 0}
+.btn{border:0;border-radius:14px;padding:16px 18px;font-family:inherit;font-size:1em;font-weight:800;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;text-decoration:none}
+.btn.principal{background:rgb(var(--ac));color:#fff;box-shadow:0 6px 18px rgba(var(--ac),.32)}
+.btn.principal svg{width:20px;height:20px}
+.btn.secundario{background:var(--card);color:var(--ink);border:1px solid var(--line);font-weight:700}
+.aviso{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+  font-size:.86em;color:var(--mut);text-align:center;margin-bottom:6px}
+.aviso b{color:var(--ink)}
+
+.qr{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;
+  display:flex;align-items:center;gap:16px;margin:22px 0}
+.qr img{width:104px;height:104px;border-radius:10px;flex:0 0 auto}
+.qr p{font-size:.86em;color:var(--mut)}
+.qr p b{color:var(--ink)}
+
+.rot{font-family:var(--fd),cursive;font-size:1.55em;font-weight:700;margin:30px 0 14px}
+
+.abas{display:flex;gap:6px;background:var(--soft);border-radius:12px;padding:4px;margin-bottom:14px}
+.abas button{flex:1;border:0;background:none;border-radius:9px;padding:9px 0;font-family:inherit;
+  font-weight:800;font-size:.9em;color:var(--mut);cursor:pointer}
+.abas button.on{background:var(--card);color:rgb(var(--ac));box-shadow:0 1px 4px rgba(20,24,27,.1)}
+
+.passos{display:none}
+.passos.on{display:block}
+.passo{display:flex;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:14px;margin-bottom:10px}
+.passo .n{flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:rgb(var(--ac));color:#fff;
+  display:grid;place-items:center;font-weight:800;font-size:.9em}
+.passo .t b{display:block;font-weight:800;margin-bottom:2px}
+.passo .t span{color:var(--mut);font-size:.9em}
+
+.cards{display:grid;gap:10px;margin-top:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.card b{display:block;font-weight:800;margin-bottom:3px}
+.card span{color:var(--mut);font-size:.9em}
+
+footer{text-align:center;color:var(--mut);font-size:.8em;margin-top:34px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <img class="selo" src="../icon-512.png" alt="Ícone do app Discursos Públicos">
+    <h1>Discursos <b>Públicos</b></h1>
+    <p>Organize discursos, oradores e substitutos da sua congregação, direto no celular.</p>
+  </header>
+
+  <div class="acoes">
+    <button class="btn principal" id="btInstalar" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13m0 0-4.5-4.5M12 16l4.5-4.5"/><path d="M4 18v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+      Instalar no meu celular
+    </button>
+    <div class="aviso" id="avisoInstalado" style="display:none">✅ O app já está instalado neste aparelho.</div>
+    <a class="btn secundario" href="../index.html">Só abrir, sem instalar</a>
+  </div>
+
+  <p style="color:var(--mut);font-size:.86em;text-align:center;padding:0 6px">
+    A instalação é feita pelo próprio navegador. Não baixa arquivo, não pede senha extra
+    e não ocupa quase nada de espaço.
+  </p>
+
+  <div class="qr">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&color=193-86-26&data=https%3A%2F%2Falanclebersantana.github.io%2FDiscurso-P-blico-%2F" alt="QR code para abrir o app Discursos Públicos">
+    <p>Para instalar no celular de outra pessoa, peça para ela <b>apontar a câmera</b> para este código.</p>
+  </div>
+
+  <h2 class="rot">Como instalar</h2>
+  <p style="color:var(--mut);font-size:.9em;margin-bottom:14px">São dois toques. Escolha o seu aparelho.</p>
+
+  <div class="abas">
+    <button id="abaAndroid" class="on">Android</button>
+    <button id="abaIphone">iPhone</button>
+  </div>
+
+  <div class="passos on" id="passosAndroid">
+    <div class="passo"><div class="n">1</div><div class="t"><b>Abra esta página no Chrome</b><span>Se você chegou pelo WhatsApp ou pelo Instagram, toque nos três pontinhos do canto e escolha "Abrir no navegador".</span></div></div>
+    <div class="passo"><div class="n">2</div><div class="t"><b>Toque no botão laranja aqui em cima</b><span>Se ele não aparecer, use o menu ⋮ do Chrome e escolha "Instalar app" ou "Adicionar à tela inicial".</span></div></div>
+    <div class="passo"><div class="n">3</div><div class="t"><b>Confirme em Instalar</b><span>O ícone do Discursos Públicos aparece na tela inicial, junto dos outros aplicativos.</span></div></div>
+  </div>
+
+  <div class="passos" id="passosIphone">
+    <div class="passo"><div class="n">1</div><div class="t"><b>Abra esta página no Safari</b><span>No iPhone, só o Safari consegue instalar. Se abriu no Chrome, copie o endereço e cole no Safari.</span></div></div>
+    <div class="passo"><div class="n">2</div><div class="t"><b>Toque no botão de compartilhar</b><span>É o quadradinho com a seta para cima, na barra de baixo.</span></div></div>
+    <div class="passo"><div class="n">3</div><div class="t"><b>Escolha "Adicionar à Tela de Início"</b><span>Role a lista até achar. Depois toque em "Adicionar", no canto de cima.</span></div></div>
+  </div>
+
+  <h2 class="rot">Bom saber</h2>
+  <div class="cards">
+    <div class="card"><b>Sincroniza em qualquer aparelho</b><span>Entre com a mesma conta (e-mail e senha) no celular, no tablet ou no computador e os discursos aparecem automaticamente nos dois.</span></div>
+    <div class="card"><b>Atualiza sozinho</b><span>Quando sai uma versão nova, ela chega na próxima vez que você abrir com internet. Não precisa reinstalar.</span></div>
+    <div class="card"><b>Não instala nada extra</b><span>O atalho abre o mesmo site de sempre, em tela cheia, sem passar por loja de aplicativos.</span></div>
+    <div class="card"><b>Backup manual</b><span>Na tela Ajustes, salve um arquivo de backup de vez em quando, principalmente se quiser guardar uma cópia à parte.</span></div>
+  </div>
+
+  <footer>Discursos Públicos · Oradores</footer>
+</div>
+
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('../sw.js').catch(()=>{});
+}
+
+const btInstalar = document.getElementById('btInstalar');
+const avisoInstalado = document.getElementById('avisoInstalado');
+let promptEvento = null;
+
+function rodandoInstalado(){
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+
+const ehIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+if(rodandoInstalado()){
+  avisoInstalado.style.display = 'block';
+} else if(ehIOS){
+  // Safari/iOS não dispara beforeinstallprompt: instrução é sempre manual.
+  document.getElementById('abaIphone').click();
+} else {
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    promptEvento = e;
+    btInstalar.style.display = 'flex';
+  });
+}
+
+btInstalar.addEventListener('click', async () => {
+  if(!promptEvento) return;
+  promptEvento.prompt();
+  await promptEvento.userChoice;
+  promptEvento = null;
+  btInstalar.style.display = 'none';
+});
+
+window.addEventListener('appinstalled', () => {
+  btInstalar.style.display = 'none';
+  avisoInstalado.style.display = 'block';
+});
+
+/* abas Android / iPhone */
+const abaAndroid = document.getElementById('abaAndroid');
+const abaIphone = document.getElementById('abaIphone');
+const passosAndroid = document.getElementById('passosAndroid');
+const passosIphone = document.getElementById('passosIphone');
+abaAndroid.onclick = () => {
+  abaAndroid.classList.add('on'); abaIphone.classList.remove('on');
+  passosAndroid.classList.add('on'); passosIphone.classList.remove('on');
+};
+abaIphone.onclick = () => {
+  abaIphone.classList.add('on'); abaAndroid.classList.remove('on');
+  passosIphone.classList.add('on'); passosAndroid.classList.remove('on');
+};
+</script>
+</body>
+</html>
