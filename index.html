@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#C1561A">
+<meta name="description" content="Organize discursos públicos, oradores e substitutos da sua congregação.">
+<title>Discursos Públicos · Oradores</title>
+
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="./icons/favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Discursos">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&family=Inter:wght@400;600;700&family=Figtree:wght@400;600;700&family=Manrope:wght@400;600;700&family=Work+Sans:wght@400;600;700&family=Rubik:wght@400;600;700&family=IBM+Plex+Sans:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&family=Lato:wght@400;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ac:14,107,117; --ac2:10,84,92;
+  --bg:#F1F4F5; --sup:#E2E8EA; --card:#FFFFFF;
+  --ink:#14181B; --mut:#6A737A; --line:#D7DEE1; --soft:#E9EEF0;
+  --danger:#B4404F;
+  --r:18px; --r2:12px;
+  --ff:'Nunito'; --fd:'Caveat'; --fs:16px;
+  --sh:0 2px 10px rgba(20,24,27,.07);
+}
+html[data-escuro="1"]{
+  --bg:#101417; --sup:#171D21; --card:#1A2126;
+  --ink:#E9EDF0; --mut:#939DA5; --line:#2A333A; --soft:#222A30;
+  --sh:0 2px 12px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--ff),system-ui,sans-serif;
+  font-size:var(--fs);line-height:1.45;padding-bottom:96px;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:repeating-linear-gradient(-45deg,rgba(255,255,255,.35) 0 2px,transparent 2px 22px);opacity:.6}
+html[data-escuro="1"] body::before{background:repeating-linear-gradient(-45deg,rgba(255,255,255,.03) 0 2px,transparent 2px 22px)}
+.wrap{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:0 16px}
+
+/* ---------- topo ---------- */
+header{position:sticky;top:0;z-index:30;background:var(--sup);border-bottom:1px solid var(--line);
+  border-radius:0 0 20px 20px;overflow:hidden}
+html[data-escuro="1"] header{background:var(--sup)}
+.topo{display:flex;align-items:center;gap:10px;padding:14px 16px 12px;max-width:640px;margin:0 auto}
+.marca{flex:1;min-width:0}
+.marca h1{font-family:var(--fd),cursive;font-size:1.95em;line-height:1;font-weight:700;letter-spacing:.2px}
+.marca h1 b{color:rgb(var(--ac));font-weight:700}
+.marca p{font-size:.72em;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);font-weight:700;margin-top:2px}
+.ib{width:42px;height:42px;border-radius:13px;border:1px solid var(--line);background:var(--card);
+  color:var(--ink);display:grid;place-items:center;flex:0 0 auto;cursor:pointer}
+.ib svg{width:20px;height:20px}
+
+/* ---------- blocos ---------- */
+section[data-tela]{display:none;padding-top:16px}
+section[data-tela].on{display:block}
+.tit{font-family:var(--fd),cursive;font-size:1.75em;font-weight:700;margin:6px 0 2px}
+.sub{color:var(--mut);font-size:.9em;margin-bottom:14px}
+.rot{font-size:.72em;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);font-weight:800;
+  display:flex;align-items:center;gap:12px;margin:22px 0 10px}
+.rot::after{content:"";flex:1;height:1px;background:var(--line)}
+
+.cartao{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);
+  padding:14px 16px;margin-bottom:12px;position:relative;overflow:hidden}
+.cartao.acc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:rgb(var(--ac))}
+.cartao.acc{padding-left:20px}
+
+.linha{display:flex;align-items:center;gap:10px}
+.espaco{flex:1}
+
+.dataChip{display:inline-flex;align-items:baseline;gap:6px;background:rgba(var(--ac),.10);color:rgb(var(--ac));
+  border-radius:999px;padding:4px 12px;font-weight:800;font-size:.82em;letter-spacing:.02em}
+.faltam{font-size:.74em;color:var(--mut);font-weight:700}
+.numTema{margin-top:10px}
+.numTema .n{display:inline-block;background:var(--soft);border-radius:8px;padding:1px 8px;font-weight:800;font-size:.8em;color:var(--mut)}
+.numTema .t{font-weight:700;margin-top:4px;line-height:1.3}
+
+.orador{margin-top:12px}
+.orador .nome{font-size:1.18em;font-weight:800;line-height:1.2}
+.orador .cong{color:var(--mut);font-size:.88em;font-weight:600}
+.subst{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);opacity:.78}
+.subst .cap{font-size:.68em;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:800}
+.subst .nome{font-size:.98em;font-weight:700}
+.subst .cong{color:var(--mut);font-size:.82em}
+
+/* faixa da semana */
+.semNav{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.semNav .rot2{flex:1;font-size:.82em;font-weight:800;color:var(--mut)}
+.semNav button{width:34px;height:34px;border-radius:11px;border:1px solid var(--line);background:var(--card);
+  color:var(--ink);font-size:1em;font-weight:800;cursor:pointer;line-height:1}
+.semana{display:flex;gap:5px;margin-bottom:20px}
+.semana>button{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:7px 0 6px;cursor:pointer;font-family:inherit;color:var(--ink);display:block}
+.semana>button .w{font-size:.62em;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);font-weight:800}
+.semana>button .n{font-size:1em;font-weight:800;margin-top:1px}
+.semana>button .p{width:5px;height:5px;border-radius:50%;background:rgb(var(--ac));margin:3px auto 0}
+.semana>button.hoje{border-color:rgb(var(--ac));border-width:2px}
+.semana>button.on{background:rgb(var(--ac));border-color:rgb(var(--ac))}
+.semana>button.on .w{color:rgba(255,255,255,.85)}
+.semana>button.on .n{color:#fff}
+.semana>button.on .p{background:#fff}
+
+/* linha do tempo */
+.fluxo{position:relative;padding-left:30px;margin-top:4px}
+.fluxo::before{content:"";position:absolute;left:9px;top:8px;bottom:14px;width:2px;background:var(--line)}
+.no{position:relative;margin-bottom:16px}
+.no::before{content:"";position:absolute;left:-26px;top:5px;width:13px;height:13px;border-radius:50%;
+  background:rgb(var(--ac));border:3px solid var(--bg);box-shadow:0 0 0 1px var(--line)}
+.no.passado::before{background:var(--line)}
+.no .quando{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.no .quando b{font-size:.88em;font-weight:800;color:rgb(var(--ac))}
+.no .quando span{font-size:.78em;color:var(--mut);font-weight:700}
+.no .cx{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--sh);padding:12px 14px;margin-top:6px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:.76em;font-weight:700;background:var(--soft);border:1px solid var(--line);
+  border-radius:999px;padding:3px 10px;color:var(--ink)}
+.chip b{font-weight:800;color:var(--mut);font-size:.92em}
+.chip.pend{color:var(--mut);border-style:dashed}
+.acoes{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.btn{border:0;border-radius:12px;padding:9px 14px;font-family:inherit;font-size:.86em;font-weight:800;
+  cursor:pointer;display:inline-flex;align-items:center;gap:7px;background:rgb(var(--ac));color:#fff}
+.btn svg{width:16px;height:16px}
+.btn.g{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.btn.z{background:transparent;color:var(--mut);border:1px solid var(--line)}
+.btn.d{background:transparent;color:var(--danger);border:1px solid var(--line)}
+.btn.wa{background:#1FA855}
+.btn.bloco{width:100%;justify-content:center;padding:13px}
+
+.campo{margin-bottom:12px}
+.campo label{display:block;font-size:.74em;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);font-weight:800;margin-bottom:5px}
+input,select,textarea{width:100%;font-family:inherit;font-size:1em;color:var(--ink);background:var(--card);
+  border:1px solid var(--line);border-radius:var(--r2);padding:11px 12px;outline:none}
+input:focus,select,textarea:focus{border-color:rgb(var(--ac))}
+textarea{resize:vertical;min-height:76px}
+.dupla{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.painelSub{display:none;margin-top:10px;padding:12px;background:var(--soft);border-radius:var(--r2);border:1px solid var(--line)}
+.painelSub.on{display:block}
+
+.vazio{text-align:center;color:var(--mut);padding:34px 20px;font-size:.94em}
+.vazio svg{width:46px;height:46px;opacity:.35;margin-bottom:10px}
+
+.aviso{background:rgba(180,64,79,.10);border:1px solid rgba(180,64,79,.35);color:var(--danger);
+  border-radius:var(--r2);padding:11px 13px;font-size:.88em;font-weight:700;margin-bottom:12px}
+.aviso.ok{background:rgba(var(--ac),.10);border-color:rgba(var(--ac),.35);color:rgb(var(--ac))}
+
+.busca{position:relative;margin-bottom:12px}
+.busca input{padding-left:38px}
+.busca svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--mut)}
+
+.temaItem{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+.temaItem .n{min-width:44px;font-weight:800;color:rgb(var(--ac))}
+.temaItem .x{background:none;border:0;color:var(--mut);cursor:pointer;padding:2px 6px}
+
+.opt{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.opt .t{flex:1}
+.opt .t b{display:block;font-weight:800}
+.opt .t small{color:var(--mut)}
+.sw{width:50px;height:29px;border-radius:999px;background:var(--line);position:relative;cursor:pointer;flex:0 0 auto;border:0}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:23px;height:23px;border-radius:50%;background:#fff;transition:.18s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sw.on{background:rgb(var(--ac))}
+.sw.on::after{left:24px}
+
+.fonteGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.fonteBtn{border:1px solid var(--line);background:var(--card);border-radius:var(--r2);padding:10px;cursor:pointer;
+  color:var(--ink);font-size:.95em;text-align:left}
+.fonteBtn.on,.palBtn.on{border-color:rgb(var(--ac));box-shadow:0 0 0 2px rgba(var(--ac),.18)}
+.palBtn{border:1px solid var(--line);background:var(--card);border-radius:var(--r2);padding:10px;
+  cursor:pointer;color:var(--ink);font-size:.9em;font-weight:700;text-align:left;font-family:inherit}
+.amostra{display:flex;gap:3px;margin-bottom:6px}
+.amostra i{width:20px;height:20px;border-radius:6px;display:block;border:1px solid rgba(0,0,0,.08)}
+.fonteBtn small{display:block;color:var(--mut);font-size:.72em;font-family:var(--ff)}
+
+.tam{display:flex;align-items:center;gap:12px;margin-top:10px}
+.tam button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);
+  color:var(--ink);font-size:1.1em;font-weight:800;cursor:pointer}
+.tam .v{flex:1;text-align:center;font-weight:800}
+
+/* ---------- rodapé ---------- */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--sup);border-top:1px solid var(--line);
+  padding:6px 0 calc(6px + env(safe-area-inset-bottom));border-radius:20px 20px 0 0}
+.navIn{display:flex;max-width:640px;margin:0 auto}
+nav button{flex:1;background:none;border:0;color:var(--mut);font-family:inherit;font-size:.68em;font-weight:800;
+  display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;cursor:pointer}
+nav button svg{width:22px;height:22px}
+nav button.on{color:rgb(var(--ac))}
+
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);z-index:60;
+  background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:999px;font-weight:700;font-size:.88em;
+  opacity:0;transition:.22s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center}
+.modal.on{display:flex}
+.modalIn{background:var(--card);width:100%;max-width:640px;border-radius:22px 22px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto}
+.modalIn h3{font-family:var(--fd),cursive;font-size:1.6em;margin-bottom:4px}
+.modalIn p.q{color:var(--mut);font-size:.92em;margin-bottom:16px}
+
+/* ---------- calendário do mês ---------- */
+.calTop{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.calTop h3{flex:1;text-align:center;text-transform:capitalize;margin-bottom:0}
+.calSemana{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;
+  font-size:.68em;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:800;margin-bottom:4px}
+.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.calGrid button{aspect-ratio:1;border:0;background:none;border-radius:10px;color:var(--ink);
+  font-family:inherit;font-size:.92em;font-weight:700;cursor:pointer;position:relative}
+.calGrid button.fora{color:var(--mut);opacity:.4}
+.calGrid button.hoje{border:2px solid rgb(var(--ac))}
+.calGrid button.semSel{background:rgba(var(--ac),.14)}
+.calGrid button.temDisc::after{content:"";position:absolute;left:50%;bottom:4px;transform:translateX(-50%);
+  width:5px;height:5px;border-radius:50%;background:rgb(var(--ac))}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topo">
+    <div class="marca">
+      <h1>Discursos <b>Públicos</b></h1>
+      <p id="topoSub">Oradores</p>
+    </div>
+    <button class="ib" id="btEscuro" title="Modo escuro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a6.8 6.8 0 0 0 11 11Z"/></svg></button>
+    <button class="ib" data-ir="ajustes" title="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.56V21a2 2 0 1 1-4 0v-.11a1.7 1.7 0 0 0-1.1-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1H3a2 2 0 1 1 0-4h.11a1.7 1.7 0 0 0 1.56-1.1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6h.09A1.7 1.7 0 0 0 10.25 3V3a2 2 0 1 1 4 0v.11a1.7 1.7 0 0 0 1 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.09a1.7 1.7 0 0 0 1.56 1H21a2 2 0 1 1 0 4h-.11a1.7 1.7 0 0 0-1.49 1Z"/></svg></button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ INÍCIO ============ -->
+  <section data-tela="inicio" class="on">
+    <div id="avisosLembrete"></div>
+    <div class="semNav">
+      <button id="semAnt">‹</button>
+      <button class="rot2" id="semRot" type="button" style="background:none;border:0;text-align:center;cursor:pointer;color:var(--mut);font-weight:800"></button>
+      <button id="semHoje" style="width:auto;padding:0 12px;font-size:.8em">hoje</button>
+      <button id="semProx">›</button>
+    </div>
+    <div class="semana" id="semana"></div>
+
+    <h2 class="tit" id="tituloMes">Próximos discursos</h2>
+    <p class="sub" id="subMes"></p>
+    <div id="listaAgenda"></div>
+  </section>
+
+  <!-- ============ NOVO ============ -->
+  <section data-tela="novo">
+    <h2 class="tit" id="tituloNovo">Novo discurso</h2>
+    <p class="sub">Preencha os dados do discurso e do orador.</p>
+
+    <div id="avisoRepetido"></div>
+
+    <div class="cartao">
+      <div class="campo"><label>Data</label><input type="date" id="fData"></div>
+      <div class="campo">
+        <label>Número do discurso</label>
+        <input type="text" id="fNum" list="dlTemas" inputmode="numeric" placeholder="ex.: 42">
+        <datalist id="dlTemas"></datalist>
+      </div>
+      <div class="campo"><label>Tema</label><input type="text" id="fTema" placeholder="Preenche sozinho pelo número"></div>
+      <div class="dupla">
+        <div class="campo"><label>Cântico</label><input type="text" id="fCantico" inputmode="numeric" placeholder="ex.: 129"></div>
+        <div class="campo"><label>Imagens</label>
+          <select id="fImagens">
+            <option value="">A confirmar</option>
+            <option value="sim">Vai usar</option>
+            <option value="nao">Não vai usar</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="rot">Orador</div>
+    <div class="cartao">
+      <div class="campo"><label>Nome</label><input type="text" id="fNome" placeholder="Nome do orador"></div>
+      <div class="campo"><label>Congregação</label><input type="text" id="fCong" list="dlCongs" placeholder="Congregação"><datalist id="dlCongs"></datalist></div>
+      <div class="campo"><label>WhatsApp</label><input type="tel" id="fWhats" inputmode="tel" placeholder="(44) 90000-0000"></div>
+    </div>
+
+    <div class="rot">Substituto <span style="text-transform:none;letter-spacing:0;font-weight:600">(opcional)</span></div>
+    <div class="cartao">
+      <button class="btn g bloco" id="btAbrirSubNovo" type="button">+ Adicionar substituto</button>
+      <div class="painelSub" id="painelSubNovo">
+        <div class="campo"><label>Nome</label><input type="text" id="fsNome" placeholder="Nome do substituto"></div>
+        <div class="campo"><label>Congregação</label><input type="text" id="fsCong" list="dlCongs" placeholder="Congregação"></div>
+        <div class="campo"><label>WhatsApp</label><input type="tel" id="fsWhats" inputmode="tel" placeholder="(44) 90000-0000"></div>
+        <div class="acoes">
+          <button class="btn" id="btOkSubNovo" type="button">Salvar substituto</button>
+          <button class="btn z" id="btLimparSubNovo" type="button">Remover</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="rot">Observações</div>
+    <div class="cartao">
+      <textarea id="fObs" placeholder="Transporte, hospedagem, almoço, pedidos…"></textarea>
+    </div>
+
+    <div class="acoes" style="margin-bottom:24px">
+      <button class="btn bloco" id="btSalvar">Salvar discurso</button>
+    </div>
+    <div class="acoes" style="margin-bottom:30px">
+      <button class="btn z bloco" id="btCancelarEdicao" style="display:none">Cancelar edição</button>
+    </div>
+  </section>
+
+  <!-- ============ REGISTRO ============ -->
+  <section data-tela="registro">
+    <h2 class="tit">Registro</h2>
+    <p class="sub">Todos os discursos já realizados.</p>
+    <div class="busca">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="search" id="buscaReg" placeholder="Buscar por orador, tema, número ou congregação">
+    </div>
+    <div id="listaRegistro"></div>
+  </section>
+
+  <!-- ============ TEMAS ============ -->
+  <section data-tela="temas">
+    <h2 class="tit">Temas</h2>
+    <p class="sub">Lista de esboços do S-99-T.</p>
+    <div id="temasArea"></div>
+  </section>
+
+  <!-- ============ AJUSTES ============ -->
+  <section data-tela="ajustes">
+    <h2 class="tit">Ajustes</h2>
+    <p class="sub">Aparência, lembretes e sincronização.</p>
+
+    <div class="rot">Aparência</div>
+    <div class="cartao">
+      <div class="opt">
+        <div class="t"><b>Modo escuro</b><small>Fundo escuro em todo o app</small></div>
+        <button class="sw" id="swEscuro"></button>
+      </div>
+      <div style="padding-top:12px">
+        <b style="display:block;margin-bottom:2px">Tamanho da fonte</b>
+        <small style="color:var(--mut)">Vale para o app inteiro</small>
+        <div class="tam">
+          <button id="btMenos">A−</button>
+          <div class="v" id="vTam">16 px</div>
+          <button id="btMais">A+</button>
+        </div>
+      </div>
+      <div style="padding-top:16px">
+        <b style="display:block;margin-bottom:2px">Cores</b>
+        <small style="color:var(--mut)">Onze paletas</small>
+        <div class="fonteGrid" id="gradePaletas"></div>
+      </div>
+      <div style="padding-top:16px">
+        <b style="display:block;margin-bottom:2px">Fonte</b>
+        <small style="color:var(--mut)">Dez opções</small>
+        <div class="fonteGrid" id="gradeFontes"></div>
+      </div>
+    </div>
+
+    <div class="rot">Lembretes</div>
+    <div class="cartao">
+      <div class="opt">
+        <div class="t"><b>Uma semana antes</b><small>Aviso 7 dias antes do discurso</small></div>
+        <button class="sw" id="swL7"></button>
+      </div>
+      <div class="opt" style="border-bottom:0">
+        <div class="t"><b>Três dias antes</b><small>Aviso 3 dias antes do discurso</small></div>
+        <button class="sw" id="swL3"></button>
+      </div>
+      <button class="btn g bloco" id="btPermNotif" style="margin-top:12px">Ativar notificações no celular</button>
+    </div>
+
+    <div class="rot">Mensagem do WhatsApp</div>
+    <div class="cartao">
+      <p style="font-size:.86em;color:var(--mut);margin-bottom:8px">
+        Use <b>{orador}</b>, <b>{data}</b>, <b>{num}</b>, <b>{tema}</b>, <b>{cong}</b>, <b>{cantico}</b> e <b>{imagens}</b>.
+      </p>
+      <textarea id="fModelo" style="min-height:150px"></textarea>
+      <div class="acoes"><button class="btn" id="btSalvarModelo">Salvar modelo</button>
+      <button class="btn z" id="btModeloPadrao">Voltar ao padrão</button></div>
+    </div>
+
+    <div class="rot">Lista de temas (S-99-T)</div>
+    <div class="cartao">
+      <p style="font-size:.86em;color:var(--mut);margin-bottom:10px">
+        O arquivo não vem dentro do app. Você envia o PDF do seu aparelho e ele fica guardado
+        na sua conta ao sincronizar.
+      </p>
+      <div id="statusTemas"></div>
+      <button class="btn bloco" id="btUploadAjustes" style="margin-top:10px">Enviar PDF do S-99-T</button>
+      <button class="btn d bloco" id="btApagarTemas" style="margin-top:8px">Apagar lista de temas</button>
+    </div>
+
+    <div class="rot">Sincronização</div>
+    <div class="cartao" id="areaSync"></div>
+
+    <div class="rot">Dados</div>
+    <div class="cartao" style="margin-bottom:36px">
+      <button class="btn g bloco" id="btExportar">Baixar backup (.json)</button>
+      <button class="btn g bloco" id="btImportar" style="margin-top:8px">Restaurar backup</button>
+      <button class="btn d bloco" id="btZerar" style="margin-top:8px">Apagar tudo deste aparelho</button>
+    </div>
+  </section>
+
+</div>
+
+<input type="file" id="inpPdf" accept="application/pdf" hidden>
+<input type="file" id="inpJson" accept="application/json" hidden>
+
+<nav>
+  <div class="navIn">
+    <button data-ir="inicio" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.5 9.7V20h13V9.7"/></svg>Início</button>
+    <button data-ir="novo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Novo</button>
+    <button data-ir="registro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 4.5h11l4 4v11h-15z"/><path d="M8 10h8M8 14h8"/></svg>Registro</button>
+    <button data-ir="temas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M9 9h7M9 13h5"/></svg>Temas</button>
+    <button data-ir="ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2" fill="var(--card)"/><circle cx="15" cy="12" r="2" fill="var(--card)"/><circle cx="10" cy="17" r="2" fill="var(--card)"/></svg>Ajustes</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal" id="modal">
+  <div class="modalIn">
+    <h3 id="mTit">Confirmar</h3>
+    <p class="q" id="mTxt"></p>
+    <div class="acoes">
+      <button class="btn" id="mOk">Sim</button>
+      <button class="btn z" id="mNao">Não</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modalCal">
+  <div class="modalIn">
+    <div class="calTop">
+      <button class="ib" id="calAnt" type="button">‹</button>
+      <h3 id="calTit">Mês</h3>
+      <button class="ib" id="calProx" type="button">›</button>
+    </div>
+    <div class="calSemana">
+      <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+    </div>
+    <div class="calGrid" id="calGrid"></div>
+    <button class="btn g bloco" id="calFechar" type="button" style="margin-top:14px">Fechar</button>
+  </div>
+</div>
+
+<script>
+/* ==========================================================================
+   Discursos Públicos · Oradores
+   Arquivo único para teste. Dados em localStorage; Firebase é opcional.
+   ========================================================================== */
+const CHAVE = 'discursos.v1';
+
+const MODELO_PADRAO =
+`Bom dia, irmão {orador}!
+
+Aqui é da Congregação [NOME]. Estou confirmando o discurso público:
+
+📅 {data}
+🎤 Nº {num} — {tema}
+🎵 Cântico: {cantico}
+
+Poderia nos confirmar, por favor?
+Se puder, nos informe também:
+• o cântico que deseja
+• se vai usar imagens
+
+Muito obrigado! Será um prazer recebê-lo.`;
+
+const PALETAS = [
+  {id:'laranja',  nome:'Laranja & preto', ac:'193,86,26',  bg:'#F1F2F0', sup:'#E3E5E1', line:'#D5D8D2', soft:'#EAECE8', ink:'#14181B'},
+  {id:'petroleo', nome:'Petróleo',        ac:'14,107,117', bg:'#EFF3F4', sup:'#DFE7E9', line:'#D2DCDF', soft:'#E7EDEF', ink:'#12191C'},
+  {id:'marinho',  nome:'Marinho',         ac:'31,75,142',  bg:'#EFF1F5', sup:'#DFE4EC', line:'#D3D9E4', soft:'#E7EBF2', ink:'#131722'},
+  {id:'vinho',    nome:'Vinho',           ac:'155,59,82',  bg:'#F4F0F1', sup:'#E9E0E3', line:'#DDD3D6', soft:'#EFE9EA', ink:'#1D1418'},
+  {id:'floresta', nome:'Floresta',        ac:'11,107,68',  bg:'#EFF3F0', sup:'#DFE8E2', line:'#D3DCD6', soft:'#E7EEE9', ink:'#121B16'},
+  {id:'ferrugem', nome:'Ferrugem',        ac:'168,72,42',  bg:'#F4F1EE', sup:'#E9E2DC', line:'#DED5CE', soft:'#EFEAE5', ink:'#1C1613'},
+  {id:'ameixa',   nome:'Ameixa',          ac:'108,80,167', bg:'#F1F0F5', sup:'#E3E1EC', line:'#D8D5E3', soft:'#EAE8F1', ink:'#171423'},
+  {id:'cafe',     nome:'Café',            ac:'124,84,52',  bg:'#F4F1EB', sup:'#E8E2D8', line:'#DCD5C9', soft:'#EEEAE2', ink:'#1B1712'},
+  {id:'musgo',    nome:'Musgo',           ac:'93,110,49',  bg:'#F2F3ED', sup:'#E4E7DA', line:'#D8DCCC', soft:'#EBEDE3', ink:'#171A12'},
+  {id:'grafite',  nome:'Grafite',         ac:'62,78,90',   bg:'#F1F3F4', sup:'#E2E6E9', line:'#D6DBDF', soft:'#E9ECEF', ink:'#12171B'},
+  {id:'oceano',   nome:'Oceano',          ac:'13,124,161', bg:'#EEF3F5', sup:'#DCE7EC', line:'#D0DEE4', soft:'#E5EEF1', ink:'#111A1F'}
+];
+
+const FONTES = [
+  ['Nunito','Arredondada e leve'],
+  ['Inter','Neutra e moderna'],
+  ['Figtree','Limpa e atual'],
+  ['Manrope','Geométrica e firme'],
+  ['Work Sans','Sóbria e larga'],
+  ['Rubik','Cantos macios'],
+  ['IBM Plex Sans','Técnica e clara'],
+  ['Source Sans 3','Padrão de leitura'],
+  ['Lato','Clássica e discreta'],
+  ['Atkinson Hyperlegible','Alta legibilidade']
+];
+
+let DB = {
+  discursos: [],
+  temas: [],
+  temasOrigem: null,
+  ajustes: {
+    escuro:0, paleta:'laranja', fonte:'Nunito', tam:16,
+    l7:1, l3:1, modelo:MODELO_PADRAO
+  },
+  avisados: {}
+};
+let editandoId = null;
+
+/* ------------------------------ util ------------------------------ */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const esc = s => (s??'').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function toast(t){
+  const el = $('#toast'); el.textContent = t; el.classList.add('on');
+  clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('on'), 2400);
+}
+
+function confirmar(titulo, texto){
+  return new Promise(res=>{
+    $('#mTit').textContent = titulo;
+    $('#mTxt').textContent = texto;
+    $('#modal').classList.add('on');
+    const fim = v => { $('#modal').classList.remove('on'); res(v); };
+    $('#mOk').onclick = ()=>fim(true);
+    $('#mNao').onclick = ()=>fim(false);
+    $('#modal').onclick = e => { if(e.target.id==='modal') fim(false); };
+  });
+}
+
+function hoje0(){ const d = new Date(); d.setHours(0,0,0,0); return d; }
+function dISO(s){ const [a,m,d] = s.split('-').map(Number); return new Date(a, m-1, d); }
+function fmtData(s){
+  if(!s) return '';
+  const d = dISO(s);
+  const dias = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+  const mes = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  return `${dias[d.getDay()]}, ${d.getDate()} de ${mes[d.getMonth()]}`;
+}
+function fmtDataCurta(s){
+  if(!s) return '';
+  const d = dISO(s);
+  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+}
+function diasAte(s){ return Math.round((dISO(s) - hoje0()) / 86400000); }
+
+function soDigitos(t){ return (t||'').replace(/\D/g,''); }
+function linkWhats(num, msg){
+  let n = soDigitos(num);
+  if(n.length <= 11) n = '55' + n;
+  return `https://wa.me/${n}?text=${encodeURIComponent(msg)}`;
+}
+
+/* ------------------------------ estado ------------------------------ */
+function salvar(){
+  try{ localStorage.setItem(CHAVE, JSON.stringify(DB)); }catch(e){ toast('Não consegui salvar neste aparelho'); }
+  if(window.Nuvem && Nuvem.ativo()) Nuvem.enviar();
+}
+function carregar(){
+  try{
+    const b = localStorage.getItem(CHAVE);
+    if(b){
+      const o = JSON.parse(b);
+      DB = Object.assign(DB, o);
+      DB.ajustes = Object.assign({escuro:0,paleta:'laranja',fonte:'Nunito',tam:16,l7:1,l3:1,modelo:MODELO_PADRAO}, o.ajustes||{});
+      DB.avisados = o.avisados||{};
+    }
+  }catch(e){}
+}
+
+/* ------------------------------ aparência ------------------------------ */
+function aplicarAparencia(){
+  const a = DB.ajustes;
+  const pal = PALETAS.find(p => p.id === a.paleta) || PALETAS[0];
+  const r = document.documentElement.style;
+  r.setProperty('--ac', pal.ac);
+  if(!a.escuro){
+    r.setProperty('--bg', pal.bg); r.setProperty('--sup', pal.sup);
+    r.setProperty('--line', pal.line); r.setProperty('--soft', pal.soft);
+    r.setProperty('--ink', pal.ink); r.setProperty('--card', '#FFFFFF');
+  } else {
+    ['--bg','--sup','--line','--soft','--ink','--card'].forEach(k => r.removeProperty(k));
+  }
+  document.documentElement.dataset.escuro = a.escuro ? '1' : '0';
+  r.setProperty('--ff', `'${a.fonte}'`);
+  r.setProperty('--fs', a.tam + 'px');
+  $('#vTam').textContent = a.tam + ' px';
+  $('#swEscuro').classList.toggle('on', !!a.escuro);
+  $('#swL7').classList.toggle('on', !!a.l7);
+  $('#swL3').classList.toggle('on', !!a.l3);
+  $$('.fonteBtn').forEach(b => b.classList.toggle('on', b.dataset.f === a.fonte));
+  $$('.palBtn').forEach(b => b.classList.toggle('on', b.dataset.p === a.paleta));
+  document.querySelector('meta[name=theme-color]')
+    .setAttribute('content', a.escuro ? '#171D21' : pal.sup);
+}
+
+function montarPaletas(){
+  $('#gradePaletas').innerHTML = PALETAS.map(p => `
+    <button class="palBtn" data-p="${p.id}">
+      <span class="amostra">
+        <i style="background:rgb(${p.ac})"></i>
+        <i style="background:${p.sup}"></i>
+        <i style="background:${p.bg}"></i>
+      </span>
+      ${p.nome}
+    </button>`).join('');
+  $$('.palBtn').forEach(b => b.onclick = () => {
+    DB.ajustes.paleta = b.dataset.p; salvar(); aplicarAparencia();
+  });
+}
+
+function montarFontes(){
+  $('#gradeFontes').innerHTML = FONTES.map(([f,d]) =>
+    `<button class="fonteBtn" data-f="${f}" style="font-family:'${f}',sans-serif">${f}<small>${d}</small></button>`
+  ).join('');
+  $$('.fonteBtn').forEach(b => b.onclick = () => {
+    DB.ajustes.fonte = b.dataset.f; salvar(); aplicarAparencia();
+  });
+}
+
+/* ------------------------------ navegação ------------------------------ */
+function ir(tela){
+  $$('section[data-tela]').forEach(s => s.classList.toggle('on', s.dataset.tela === tela));
+  $$('nav button').forEach(b => b.classList.toggle('on', b.dataset.ir === tela));
+  window.scrollTo({top:0});
+  if(tela === 'inicio') renderAgenda();
+  if(tela === 'registro') renderRegistro();
+  if(tela === 'temas') renderTemas();
+  if(tela === 'ajustes'){ renderSync(); renderStatusTemas(); }
+  history.replaceState({tela}, '', '#' + tela);
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-ir]');
+  if(b){ if(b.dataset.ir === 'novo' && !editandoId) limparForm(); ir(b.dataset.ir); }
+});
+
+/* ------------------------------ agenda ------------------------------ */
+function proximos(n){
+  const h = hoje0();
+  return DB.discursos
+    .filter(d => d.data && dISO(d.data) >= h)
+    .sort((a,b) => a.data.localeCompare(b.data))
+    .slice(0, n);
+}
+function passados(){
+  const h = hoje0();
+  return DB.discursos
+    .filter(d => d.data && dISO(d.data) < h)
+    .sort((a,b) => b.data.localeCompare(a.data));
+}
+
+let refSemana = null;   // domingo da semana mostrada
+let diaFiltro = null;   // 'AAAA-MM-DD' quando o usuário toca num dia
+
+function domingoDe(d){ const x = new Date(d); x.setHours(0,0,0,0); x.setDate(x.getDate() - x.getDay()); return x; }
+function chaveISO(d){
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function renderSemana(){
+  if(!refSemana) refSemana = domingoDe(hoje0());
+  const hj = chaveISO(hoje0());
+  const nomes = ['D','S','T','Q','Q','S','S'];
+  let html = '';
+  for(let i = 0; i < 7; i++){
+    const d = new Date(refSemana); d.setDate(d.getDate() + i);
+    const k = chaveISO(d);
+    const tem = DB.discursos.some(x => x.data === k);
+    html += `<button data-dia="${k}" class="${diaFiltro===k?'on':''} ${k===hj?'hoje':''}">
+      <div class="w">${nomes[i]}</div><div class="n">${d.getDate()}</div>
+      <div class="p" style="${tem?'':'visibility:hidden'}"></div>
+    </button>`;
+  }
+  $('#semana').innerHTML = html;
+
+  const fim = new Date(refSemana); fim.setDate(fim.getDate() + 6);
+  const mesA = refSemana.toLocaleDateString('pt-BR',{month:'long'});
+  const mesB = fim.toLocaleDateString('pt-BR',{month:'long'});
+  $('#semRot').textContent = mesA === mesB
+    ? `${refSemana.getDate()} a ${fim.getDate()} de ${mesA}`
+    : `${refSemana.getDate()} de ${mesA} a ${fim.getDate()} de ${mesB}`;
+
+  $$('#semana [data-dia]').forEach(b => b.onclick = () => {
+    diaFiltro = (diaFiltro === b.dataset.dia) ? null : b.dataset.dia;
+    renderAgenda();
+  });
+}
+
+/* ------------------------------ calendário do mês (modal) ------------------------------ */
+let refCal = null; // primeiro dia do mês mostrado no modal
+
+function abrirCalendario(){
+  refCal = new Date(refSemana.getFullYear(), refSemana.getMonth(), 1);
+  renderCalendario();
+  $('#modalCal').classList.add('on');
+  history.pushState({}, '');
+}
+function fecharCalendario(){ $('#modalCal').classList.remove('on'); }
+
+function renderCalendario(){
+  const ano = refCal.getFullYear(), mes = refCal.getMonth();
+  $('#calTit').textContent = refCal.toLocaleDateString('pt-BR',{month:'long', year:'numeric'});
+
+  const hj = chaveISO(hoje0());
+  const semIniK = chaveISO(refSemana);
+  const semFimD = new Date(refSemana); semFimD.setDate(semFimD.getDate()+6);
+  const semFimK = chaveISO(semFimD);
+
+  const primeiro = new Date(ano, mes, 1);
+  const inicioGrade = new Date(primeiro); inicioGrade.setDate(primeiro.getDate() - primeiro.getDay());
+
+  let html = '';
+  for(let i = 0; i < 42; i++){
+    const d = new Date(inicioGrade); d.setDate(inicioGrade.getDate() + i);
+    const k = chaveISO(d);
+    const foraDoMes = d.getMonth() !== mes;
+    const tem = DB.discursos.some(x => x.data === k);
+    const naSemana = k >= semIniK && k <= semFimK;
+    const cls = [
+      foraDoMes ? 'fora' : '',
+      k === hj ? 'hoje' : '',
+      naSemana ? 'semSel' : '',
+      tem ? 'temDisc' : ''
+    ].filter(Boolean).join(' ');
+    html += `<button type="button" data-dia="${k}" class="${cls}">${d.getDate()}</button>`;
+  }
+  $('#calGrid').innerHTML = html;
+
+  $$('#calGrid [data-dia]').forEach(b => b.onclick = () => {
+    const d = dISO(b.dataset.dia);
+    refSemana = domingoDe(d);
+    diaFiltro = b.dataset.dia;
+    renderAgenda();
+    fecharCalendario();
+  });
+}
+
+$('#semRot').onclick = abrirCalendario;
+$('#calAnt').onclick = () => { refCal.setMonth(refCal.getMonth()-1); renderCalendario(); };
+$('#calProx').onclick = () => { refCal.setMonth(refCal.getMonth()+1); renderCalendario(); };
+$('#calFechar').onclick = fecharCalendario;
+$('#modalCal').onclick = e => { if(e.target.id === 'modalCal') fecharCalendario(); };
+
+/* ------------------------------ navegar arrastando (swipe) ------------------------------ */
+(function(){
+  const ORDEM = ['inicio','novo','registro','temas','ajustes'];
+  let x0 = null, y0 = null, t0 = 0;
+
+  document.addEventListener('touchstart', e => {
+    if(e.target.closest('.modal.on, .fluxo, textarea, input, select, .semana, .calGrid')) { x0 = null; return; }
+    const t = e.touches[0];
+    x0 = t.clientX; y0 = t.clientY; t0 = Date.now();
+  }, {passive:true});
+
+  document.addEventListener('touchend', e => {
+    if(x0 === null) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - x0, dy = t.clientY - y0, dt = Date.now() - t0;
+    x0 = null;
+    if(dt > 700) return;
+    if(Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.4) return;
+    const atual = $('section[data-tela].on')?.dataset.tela;
+    let i = ORDEM.indexOf(atual);
+    if(i === -1) return;
+    i = dx < 0 ? Math.min(i+1, ORDEM.length-1) : Math.max(i-1, 0);
+    const novaTela = ORDEM[i];
+    if(novaTela !== atual){ ir(novaTela); history.pushState({tela:novaTela}, ''); }
+  }, {passive:true});
+})();
+
+function miolo(d){
+  const sub = d.sub && (d.sub.nome || d.sub.cong) ? `
+    <div class="subst">
+      <div class="cap">Substituto</div>
+      <div class="nome">${esc(d.sub.nome || '—')}</div>
+      ${d.sub.cong ? `<div class="cong">${esc(d.sub.cong)}</div>` : ''}
+      ${d.sub.whats ? `<div class="cong">${esc(d.sub.whats)}</div>` : ''}
+    </div>` : '';
+
+  return `
+    <div class="numTema">
+      ${d.num ? `<span class="n">Nº ${esc(d.num)}</span>` : ''}
+      <div class="t">${esc(d.tema || 'Tema não informado')}</div>
+    </div>
+
+    <div class="orador">
+      <div class="nome">${esc(d.nome || 'Orador não definido')}</div>
+      ${d.cong ? `<div class="cong">${esc(d.cong)}</div>` : ''}
+      ${d.whats ? `<div class="cong">${esc(d.whats)}</div>` : ''}
+    </div>
+    ${sub}
+
+    <div class="chips">
+      ${d.cantico ? `<span class="chip"><b>Cântico</b> ${esc(d.cantico)}</span>`
+                  : `<span class="chip pend"><b>Cântico</b> a definir</span>`}
+      ${d.imagens === 'sim' ? `<span class="chip"><b>Imagens</b> vai usar</span>`
+        : d.imagens === 'nao' ? `<span class="chip"><b>Imagens</b> não</span>`
+        : `<span class="chip pend"><b>Imagens</b> a confirmar</span>`}
+    </div>
+
+    ${d.obs ? `<div style="margin-top:10px;font-size:.9em;color:var(--mut);white-space:pre-wrap"><b style="color:var(--ink)">Observações: </b>${esc(d.obs)}</div>` : ''}
+
+    <div class="painelSub" data-painel="${d.id}">
+      <div class="campo"><label>Nome do substituto</label><input type="text" data-s="nome" value="${esc(d.sub?.nome||'')}"></div>
+      <div class="campo"><label>Congregação</label><input type="text" data-s="cong" list="dlCongs" value="${esc(d.sub?.cong||'')}"></div>
+      <div class="campo"><label>WhatsApp</label><input type="tel" data-s="whats" value="${esc(d.sub?.whats||'')}"></div>
+      <div class="acoes">
+        <button class="btn" data-ac="salvarSub">Salvar</button>
+        <button class="btn z" data-ac="fecharSub">Fechar</button>
+        ${d.sub ? `<button class="btn d" data-ac="apagarSub">Apagar substituto</button>` : ''}
+      </div>
+    </div>
+
+    <div class="acoes">
+      ${d.whats ? `<button class="btn wa" data-ac="whats"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.7-.1a12 12 0 0 1-5.2-4.5c-.4-.6-1-1.6-1-3s.7-2 1-2.3c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.5 1.9 1 .9 1.8 1.2 2.1 1.3.3.1.4.1.6-.1l.8-1c.2-.2.4-.2.6-.1l2 1c.2.1.4.2.4.3.1.2.1.6 0 1.2Z"/></svg>Confirmar</button>` : ''}
+      <button class="btn g" data-ac="sub">${d.sub ? 'Editar substituto' : 'Substituto'}</button>
+      <button class="btn z" data-ac="editar">Editar</button>
+      <button class="btn d" data-ac="apagar">Apagar</button>
+    </div>`;
+}
+
+function cardRegistro(d){
+  return `<div class="cartao acc" data-id="${d.id}">
+    <div class="linha">
+      <span class="dataChip">${esc(fmtData(d.data))}</span>
+    </div>
+    ${miolo(d)}
+  </div>`;
+}
+
+function renderAgenda(){
+  renderSemana();
+  let lista, titulo, sub;
+
+  if(diaFiltro){
+    lista = DB.discursos.filter(d => d.data === diaFiltro);
+    titulo = fmtData(diaFiltro).replace(/^./, c => c.toUpperCase());
+    sub = lista.length
+      ? `${lista.length} discurso${lista.length>1?'s':''} neste dia. Toque no dia de novo para ver a agenda toda.`
+      : 'Nada marcado neste dia. Toque no dia de novo para ver a agenda toda.';
+  } else {
+    lista = proximos(4);
+    titulo = 'Próximos discursos';
+    const mes = new Date().toLocaleDateString('pt-BR',{month:'long', year:'numeric'});
+    sub = `A partir de ${mes.charAt(0).toUpperCase() + mes.slice(1)}.`;
+  }
+
+  $('#tituloMes').textContent = titulo;
+  $('#subMes').textContent = sub;
+
+  $('#listaAgenda').innerHTML = lista.length
+    ? `<div class="fluxo">` + lista.map(d => {
+        const n = diasAte(d.data);
+        const falta = n === 0 ? 'é hoje' : n === 1 ? 'é amanhã' : n < 0 ? 'já passou' : `faltam ${n} dias`;
+        return `<div class="no ${n<0?'passado':''}" data-id="${d.id}">
+          <div class="quando">
+            <b>${fmtDataCurta(d.data)}</b>
+            <span>${esc(fmtData(d.data).split(',')[0])} · ${falta}</span>
+          </div>
+          <div class="cx">${miolo(d)}</div>
+        </div>`;
+      }).join('') + `</div>`
+    : `<div class="vazio">
+         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+         <div>${diaFiltro ? 'Nenhum discurso neste dia.' : 'Nenhum discurso marcado ainda.<br>Toque em <b>Novo</b> para marcar o primeiro.'}</div>
+       </div>`;
+  renderLembretes();
+}
+
+function renderRegistro(){
+  const q = ($('#buscaReg').value||'').toLowerCase().trim();
+  let lista = passados();
+  if(q){
+    lista = lista.filter(d => [d.nome,d.cong,d.tema,d.num,d.cantico,d.sub?.nome,d.obs]
+      .filter(Boolean).join(' ').toLowerCase().includes(q));
+  }
+  $('#listaRegistro').innerHTML = lista.length
+    ? lista.map(d => cardRegistro(d)).join('')
+    : `<div class="vazio">
+         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4.5 4.5h11l4 4v11h-15z"/><path d="M8 10h8M8 14h8"/></svg>
+         <div>${q ? 'Nada encontrado.' : 'Ainda não há discursos realizados.'}</div>
+       </div>`;
+}
+
+/* ações nos cards */
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-ac]');
+  if(!b) return;
+  const card = b.closest('[data-id]');
+  const id = card.dataset.id;
+  const d = DB.discursos.find(x => x.id === id);
+  if(!d) return;
+  const painel = card.querySelector('[data-painel]');
+
+  if(b.dataset.ac === 'sub'){ painel.classList.toggle('on'); return; }
+  if(b.dataset.ac === 'fecharSub'){ painel.classList.remove('on'); return; }
+  if(b.dataset.ac === 'salvarSub'){
+    const g = k => painel.querySelector(`[data-s="${k}"]`).value.trim();
+    const nome = g('nome'), cong = g('cong'), whats = g('whats');
+    d.sub = (nome||cong||whats) ? {nome,cong,whats} : null;
+    salvar(); toast(d.sub ? 'Substituto salvo' : 'Substituto removido');
+    redesenhar(); return;
+  }
+  if(b.dataset.ac === 'apagarSub'){
+    d.sub = null; salvar(); toast('Substituto apagado'); redesenhar(); return;
+  }
+  if(b.dataset.ac === 'editar'){ carregarNoForm(d); ir('novo'); return; }
+  if(b.dataset.ac === 'apagar'){
+    const ok = await confirmar('Apagar discurso', `Apagar o discurso de ${d.nome||'orador'} em ${fmtDataCurta(d.data)}?`);
+    if(ok){ DB.discursos = DB.discursos.filter(x => x.id !== id); salvar(); toast('Discurso apagado'); redesenhar(); }
+    return;
+  }
+  if(b.dataset.ac === 'whats'){
+    const msg = DB.ajustes.modelo
+      .replace(/\s*(?:às|as)\s*\{hora\}/gi, '')
+      .replaceAll('{hora}', '')
+      .replaceAll('{orador}', d.nome||'')
+      .replaceAll('{data}', fmtDataCurta(d.data))
+      .replaceAll('{num}', d.num||'')
+      .replaceAll('{tema}', d.tema||'')
+      .replaceAll('{cong}', d.cong||'')
+      .replaceAll('{cantico}', d.cantico || 'a definir')
+      .replaceAll('{imagens}', d.imagens==='sim'?'vai usar':d.imagens==='nao'?'não vai usar':'a confirmar');
+    window.open(linkWhats(d.whats, msg), '_blank');
+    return;
+  }
+});
+function redesenhar(){
+  if($('section[data-tela="inicio"]').classList.contains('on')) renderAgenda();
+  if($('section[data-tela="registro"]').classList.contains('on')) renderRegistro();
+}
+
+/* ------------------------------ formulário ------------------------------ */
+function limparForm(){
+  editandoId = null;
+  ['fData','fNum','fTema','fCantico','fImagens','fNome','fCong','fWhats','fObs','fsNome','fsCong','fsWhats'].forEach(k => {
+    $('#'+k).value = '';
+  });
+  $('#painelSubNovo').classList.remove('on');
+  $('#tituloNovo').textContent = 'Novo discurso';
+  $('#btSalvar').textContent = 'Salvar discurso';
+  $('#btCancelarEdicao').style.display = 'none';
+  $('#avisoRepetido').innerHTML = '';
+}
+function carregarNoForm(d){
+  editandoId = d.id;
+  $('#fData').value = d.data||'';
+  $('#fNum').value = d.num||'';   $('#fTema').value = d.tema||'';
+  $('#fCantico').value = d.cantico||''; $('#fImagens').value = d.imagens||'';
+  $('#fNome').value = d.nome||''; $('#fCong').value = d.cong||''; $('#fWhats').value = d.whats||'';
+  $('#fObs').value = d.obs||'';
+  $('#fsNome').value = d.sub?.nome||''; $('#fsCong').value = d.sub?.cong||''; $('#fsWhats').value = d.sub?.whats||'';
+  $('#painelSubNovo').classList.toggle('on', !!d.sub);
+  $('#tituloNovo').textContent = 'Editar discurso';
+  $('#btSalvar').textContent = 'Salvar alterações';
+  $('#btCancelarEdicao').style.display = '';
+  $('#avisoRepetido').innerHTML = '';
+}
+
+$('#btAbrirSubNovo').onclick = () => $('#painelSubNovo').classList.toggle('on');
+$('#btOkSubNovo').onclick = () => { $('#painelSubNovo').classList.remove('on'); toast('Substituto anotado'); };
+$('#btLimparSubNovo').onclick = () => {
+  ['fsNome','fsCong','fsWhats'].forEach(k => $('#'+k).value = '');
+  $('#painelSubNovo').classList.remove('on');
+};
+$('#btCancelarEdicao').onclick = () => { limparForm(); ir('inicio'); };
+
+/* número -> tema */
+$('#fNum').addEventListener('input', () => {
+  const n = $('#fNum').value.trim();
+  const t = DB.temas.find(x => String(x.n) === n);
+  if(t) $('#fTema').value = t.t;
+  checarRepetido();
+});
+$('#fData').addEventListener('change', checarRepetido);
+$('#fTema').addEventListener('blur', checarRepetido);
+
+function checarRepetido(){
+  const alvo = $('#avisoRepetido');
+  alvo.innerHTML = '';
+  const num = $('#fNum').value.trim();
+  const tema = $('#fTema').value.trim().toLowerCase();
+  const dataRef = $('#fData').value ? dISO($('#fData').value) : hoje0();
+  if(!num && !tema) return;
+  const limite = new Date(dataRef); limite.setMonth(limite.getMonth() - 5);
+
+  const achado = DB.discursos.find(d => {
+    if(d.id === editandoId) return false;
+    if(!d.data) return false;
+    const dd = dISO(d.data);
+    if(dd < limite || dd > dataRef) return false;
+    if(num && String(d.num) === num) return true;
+    if(tema && (d.tema||'').toLowerCase() === tema) return true;
+    return false;
+  });
+  if(achado){
+    alvo.innerHTML = `<div class="aviso">
+      ⚠️ Este tema já foi feito em <b>${fmtDataCurta(achado.data)}</b> por <b>${esc(achado.nome||'—')}</b>,
+      há menos de 5 meses. Deseja prosseguir mesmo assim?
+    </div>`;
+    return achado;
+  }
+  return null;
+}
+
+$('#btSalvar').onclick = async () => {
+  const data = $('#fData').value;
+  if(!data){ toast('Escolha a data do discurso'); return; }
+  const nome = $('#fNome').value.trim();
+  if(!nome){ toast('Informe o nome do orador'); return; }
+
+  const rep = checarRepetido();
+  if(rep){
+    const ok = await confirmar('Tema repetido',
+      `O tema já foi apresentado em ${fmtDataCurta(rep.data)} por ${rep.nome||'—'}, há menos de 5 meses. Marcar assim mesmo?`);
+    if(!ok) return;
+  }
+
+  const sNome = $('#fsNome').value.trim(), sCong = $('#fsCong').value.trim(), sWhats = $('#fsWhats').value.trim();
+  const reg = {
+    id: editandoId || uid(),
+    data,
+    num: $('#fNum').value.trim(), tema: $('#fTema').value.trim(),
+    cantico: $('#fCantico').value.trim(), imagens: $('#fImagens').value,
+    nome, cong: $('#fCong').value.trim(), whats: $('#fWhats').value.trim(),
+    obs: $('#fObs').value.trim(),
+    sub: (sNome||sCong||sWhats) ? {nome:sNome, cong:sCong, whats:sWhats} : null
+  };
+  if(editandoId){
+    const i = DB.discursos.findIndex(x => x.id === editandoId);
+    DB.discursos[i] = reg;
+  } else {
+    DB.discursos.push(reg);
+  }
+  salvar(); toast(editandoId ? 'Discurso atualizado' : 'Discurso marcado');
+  limparForm(); montarDatalists(); ir('inicio');
+};
+
+function montarDatalists(){
+  $('#dlTemas').innerHTML = DB.temas.filter(t => !t.off)
+    .map(t => `<option value="${esc(t.n)}">${esc(t.n)} — ${esc(t.t)}</option>`).join('');
+  const congs = [...new Set(DB.discursos.map(d => d.cong).filter(Boolean))].sort();
+  $('#dlCongs').innerHTML = congs.map(c => `<option value="${esc(c)}">`).join('');
+}
+
+/* ------------------------------ temas / PDF ------------------------------ */
+function renderTemas(){
+  const area = $('#temasArea');
+  if(!DB.temas.length){
+    area.innerHTML = `
+      <div class="vazio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M9 9h7M9 13h5"/></svg>
+        <div>A lista de temas ainda não foi enviada.<br>
+        Envie o PDF <b>S-99-T</b> do seu aparelho.</div>
+      </div>
+      <button class="btn bloco" id="btUploadTemas">Enviar PDF do S-99-T</button>
+      <p style="font-size:.84em;color:var(--mut);margin-top:12px;text-align:center">
+        O arquivo não vai junto com o app. Ele fica guardado na sua conta quando você sincroniza.
+      </p>`;
+    $('#btUploadTemas').onclick = () => $('#inpPdf').click();
+    return;
+  }
+  area.innerHTML = `
+    <div class="busca">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="search" id="buscaTema" placeholder="Buscar número ou tema">
+    </div>
+    <p class="sub" style="margin-bottom:6px">${DB.temas.length} temas · enviado em ${esc(DB.temasOrigem?.quando||'—')}</p>
+    <div class="cartao" id="listaTemas"></div>
+    <div class="acoes" style="margin-bottom:30px">
+      <button class="btn g" id="btAddTema">+ Acrescentar tema</button>
+      <button class="btn z" id="btTrocarPdf">Enviar outro PDF</button>
+    </div>`;
+  const pintar = () => {
+    const q = ($('#buscaTema').value||'').toLowerCase().trim();
+    const l = DB.temas.filter(t => !q || String(t.n).includes(q) || t.t.toLowerCase().includes(q));
+    $('#listaTemas').innerHTML = l.map(t => `
+      <div class="temaItem"${t.off ? ' style="opacity:.5"' : ''}>
+        <div class="n">${esc(t.n)}</div>
+        <div style="flex:1">${esc(t.t)}${t.off ? ' <b style="font-size:.8em;color:var(--danger)">não usar</b>' : ''}</div>
+        <button class="x" data-del="${esc(t.n)}">✕</button>
+      </div>`).join('') || `<div class="vazio" style="padding:16px">Nada encontrado.</div>`;
+    $$('#listaTemas [data-del]').forEach(b => b.onclick = async () => {
+      const ok = await confirmar('Apagar tema', `Apagar o tema nº ${b.dataset.del}?`);
+      if(ok){ DB.temas = DB.temas.filter(t => String(t.n) !== b.dataset.del); salvar(); montarDatalists(); renderTemas(); }
+    });
+  };
+  $('#buscaTema').oninput = pintar; pintar();
+  $('#btTrocarPdf').onclick = () => $('#inpPdf').click();
+  $('#btAddTema').onclick = () => {
+    const n = prompt('Número do discurso:'); if(!n) return;
+    const t = prompt('Tema:'); if(!t) return;
+    DB.temas.push({n: n.trim(), t: t.trim()});
+    DB.temas.sort((a,b) => (parseInt(a.n)||0) - (parseInt(b.n)||0));
+    salvar(); montarDatalists(); renderTemas(); toast('Tema acrescentado');
+  };
+}
+
+function renderStatusTemas(){
+  const el = $('#statusTemas');
+  el.innerHTML = DB.temas.length
+    ? `<div class="aviso ok" style="margin-bottom:0">✓ ${DB.temas.length} temas carregados · ${esc(DB.temasOrigem?.arquivo||'PDF')} · ${esc(DB.temasOrigem?.quando||'')}</div>`
+    : `<div class="aviso" style="margin-bottom:0">Nenhuma lista enviada ainda.</div>`;
+}
+$('#btUploadAjustes').onclick = () => $('#inpPdf').click();
+$('#btApagarTemas').onclick = async () => {
+  const ok = await confirmar('Apagar temas', 'Isso apaga a lista de temas deste aparelho. Continuar?');
+  if(ok){ DB.temas = []; DB.temasOrigem = null; salvar(); montarDatalists(); renderTemas(); renderSync(); renderStatusTemas(); toast('Lista apagada'); }
+};
+
+$('#inpPdf').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if(!f) return;
+  toast('Lendo o PDF…');
+  try{
+    const temas = await lerPdfTemas(f);
+    if(!temas.length){ toast('Não encontrei números e temas nesse PDF'); return; }
+    DB.temas = temas;
+    DB.temasOrigem = {arquivo: f.name, quando: new Date().toLocaleDateString('pt-BR')};
+    salvar(); montarDatalists(); renderTemas(); renderSync(); renderStatusTemas();
+    toast(`${temas.length} temas carregados`);
+    ir('temas');
+  }catch(err){
+    console.error(err);
+    toast('Falha ao ler o PDF');
+  }
+};
+
+let pdfjsPronto = null;
+function carregarPdfJs(){
+  if(window.pdfjsLib){ ajustarWorker(); return Promise.resolve(window.pdfjsLib); }
+  if(pdfjsPronto) return pdfjsPronto;
+  const LOCAL = './pdf.min.js';
+  const CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+  pdfjsPronto = carregarScript(LOCAL)
+    .catch(() => carregarScript(CDN))
+    .then(() => { ajustarWorker(); return window.pdfjsLib; });
+  return pdfjsPronto;
+}
+function ajustarWorker(){
+  const usouLocal = [...document.scripts].some(s => s.src.endsWith('/pdf.min.js') && !s.src.startsWith('http'));
+  pdfjsLib.GlobalWorkerOptions.workerSrc = usouLocal
+    ? './pdf.worker.min.js'
+    : 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+async function lerPdfTemas(file){
+  const pdfjs = await carregarPdfJs();
+  const buf = await file.arrayBuffer();
+  const doc = await pdfjs.getDocument({data: buf}).promise;
+
+  const LIXO = [/^s\s*-?\s*99\s*-?\s*t\b/i, /^ano\s*:/i, /^\d{1,3}$/, /^[\s.\u00B7\u2014\u2013-]*$/];
+  const linhas = [];
+  for(let p = 1; p <= doc.numPages; p++){
+    const pg = await doc.getPage(p);
+    const tc = await pg.getTextContent();
+    const porY = new Map();
+    tc.items.forEach(it => {
+      if(!it.str) return;                       // mantém itens de espaço
+      const x = it.transform[4], y = Math.round(it.transform[5]);
+      let k = null;
+      for(const c of porY.keys()) if(Math.abs(c - y) <= 2){ k = c; break; }
+      if(k === null){ k = y; porY.set(k, []); }
+      porY.get(k).push({x, s: it.str});
+    });
+    [...porY.entries()].sort((a,b) => b[0] - a[0]).forEach(([y, arr]) => {
+      arr.sort((a,b) => a.x - b.x);
+      const txt = arr.map(a => a.s).join('').replace(/\s+/g,' ').trim();
+      if(txt) linhas.push({txt, x: Math.round(arr[0].x)});
+    });
+  }
+
+  const temas = [];
+  let atual = null;
+  const fecha = () => { if(atual && atual.t.length >= 3) temas.push(atual); atual = null; };
+  linhas.forEach(({txt, x}) => {
+    if(LIXO.some(r => r.test(txt))) return;
+    const m = txt.match(/^(\d{1,3})\s*[.)]\s*(.*)$/);
+    if(m && +m[1] >= 1 && +m[1] <= 400){
+      fecha(); atual = {n: +m[1], t: limpar(m[2])};
+      return;
+    }
+    if(atual && x > 62 && atual.t.length < 200) atual.t = juntar(atual.t, txt);
+  });
+  fecha();
+
+  const vistos = new Set();
+  return temas.filter(t => { if(vistos.has(t.n)) return false; vistos.add(t.n); return true; })
+    .map(t => /^\(?\s*n[\u00E3a]o\s+use/i.test(t.t) ? {n:t.n, t:'(Não use.)', off:1} : {n:t.n, t:t.t})
+    .sort((a,b) => a.n - b.n);
+}
+function limpar(s){
+  return s.replace(/\u00AD/g,'').replace(/\s+/g,' ')
+          .replace(/\s+([,.;:!?])/g,'$1').replace(/[\s.]+$/,'').trim();
+}
+function juntar(a, b){
+  return /-$/.test(a) ? limpar(a.replace(/-$/,'') + b) : limpar(a + ' ' + b);
+}
+
+/* ------------------------------ lembretes ------------------------------ */
+function renderLembretes(){
+  const alvo = $('#avisosLembrete');
+  const marcos = [];
+  if(DB.ajustes.l7) marcos.push(7);
+  if(DB.ajustes.l3) marcos.push(3);
+  const itens = proximos(8).filter(d => marcos.includes(diasAte(d.data)));
+  alvo.innerHTML = itens.map(d => {
+    const n = diasAte(d.data);
+    return `<div class="aviso ok">🔔 ${n === 7 ? 'Falta uma semana' : 'Faltam 3 dias'} para o discurso de
+      <b>${esc(d.nome||'—')}</b> (${fmtDataCurta(d.data)}). Já confirmou o cântico e as imagens?</div>`;
+  }).join('');
+
+  // notificação do sistema, uma vez por dia por discurso
+  if('Notification' in window && Notification.permission === 'granted'){
+    const hojeStr = new Date().toISOString().slice(0,10);
+    itens.forEach(d => {
+      const k = d.id + ':' + diasAte(d.data);
+      if(DB.avisados[k] === hojeStr) return;
+      DB.avisados[k] = hojeStr;
+      try{
+        new Notification('Discurso público', {
+          body: `${diasAte(d.data)} dias: ${d.nome||'orador'} — ${d.tema||'tema'} (${fmtDataCurta(d.data)})`
+        });
+      }catch(e){}
+    });
+    salvar();
+  }
+}
+$('#btPermNotif').onclick = async () => {
+  if(!('Notification' in window)){ toast('Este navegador não tem notificações'); return; }
+  const p = await Notification.requestPermission();
+  toast(p === 'granted' ? 'Notificações ativadas' : 'Notificações não autorizadas');
+  renderLembretes();
+};
+
+/* ------------------------------ ajustes ------------------------------ */
+$('#btEscuro').onclick = () => { DB.ajustes.escuro = DB.ajustes.escuro ? 0 : 1; salvar(); aplicarAparencia(); };
+$('#swEscuro').onclick = () => { DB.ajustes.escuro = DB.ajustes.escuro ? 0 : 1; salvar(); aplicarAparencia(); };
+$('#swL7').onclick = () => { DB.ajustes.l7 = DB.ajustes.l7 ? 0 : 1; salvar(); aplicarAparencia(); renderLembretes(); };
+$('#swL3').onclick = () => { DB.ajustes.l3 = DB.ajustes.l3 ? 0 : 1; salvar(); aplicarAparencia(); renderLembretes(); };
+$('#btMais').onclick = () => { DB.ajustes.tam = Math.min(24, DB.ajustes.tam + 1); salvar(); aplicarAparencia(); };
+$('#btMenos').onclick = () => { DB.ajustes.tam = Math.max(13, DB.ajustes.tam - 1); salvar(); aplicarAparencia(); };
+$('#btSalvarModelo').onclick = () => { DB.ajustes.modelo = $('#fModelo').value; salvar(); toast('Modelo salvo'); };
+$('#btModeloPadrao').onclick = () => { $('#fModelo').value = MODELO_PADRAO; DB.ajustes.modelo = MODELO_PADRAO; salvar(); toast('Modelo restaurado'); };
+
+$('#btExportar').onclick = () => {
+  const b = new Blob([JSON.stringify(DB, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b);
+  a.download = `discursos-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+};
+$('#btImportar').onclick = () => $('#inpJson').click();
+$('#inpJson').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if(!f) return;
+  try{
+    const o = JSON.parse(await f.text());
+    if(!o.discursos) throw 0;
+    DB = Object.assign(DB, o); salvar(); aplicarAparencia(); montarDatalists(); ir('inicio');
+    toast('Backup restaurado');
+  }catch(err){ toast('Arquivo inválido'); }
+};
+$('#btZerar').onclick = async () => {
+  const ok = await confirmar('Apagar tudo', 'Isso apaga discursos, temas e ajustes deste aparelho. Continuar?');
+  if(ok){ localStorage.removeItem(CHAVE); location.reload(); }
+};
+
+$('#buscaReg').oninput = renderRegistro;
+$('#semAnt').onclick = () => { refSemana.setDate(refSemana.getDate()-7); diaFiltro = null; renderAgenda(); };
+$('#semProx').onclick = () => { refSemana.setDate(refSemana.getDate()+7); diaFiltro = null; renderAgenda(); };
+$('#semHoje').onclick = () => { refSemana = domingoDe(hoje0()); diaFiltro = null; renderAgenda(); };
+
+/* ------------------------------ Firebase (opcional) ------------------------------
+   Preencha os valores abaixo com os dados do SEU projeto Firebase
+   (Console do Firebase → ⚙️ Configurações do projeto → seus apps → SDK).
+   Se você não preencher, o app funciona normalmente só neste aparelho
+   (guardando tudo em localStorage), sem sincronização.
+------------------------------------------------------------------------ */
+window.FIREBASE_CONFIG = {
+  apiKey: "COLE_AQUI_A_apiKey",
+  authDomain: "COLE_AQUI_O_authDomain",       // ex.: seu-projeto.firebaseapp.com
+  projectId: "COLE_AQUI_O_projectId",
+  storageBucket: "COLE_AQUI_O_storageBucket", // ex.: seu-projeto.appspot.com
+  messagingSenderId: "COLE_AQUI_O_messagingSenderId",
+  appId: "COLE_AQUI_O_appId"
+};
+// Antes de usar, ative no Console do Firebase:
+//  1) Authentication → Sign-in method → E-mail/senha (ativar)
+//  2) Firestore Database → Criar banco de dados
+//  3) Firestore → Regras → cole o conteúdo do arquivo firestore.rules (veja no repositório)
+
+function firebaseConfigurado(){
+  const c = window.FIREBASE_CONFIG;
+  return !!(c && c.apiKey && !String(c.apiKey).startsWith('COLE_AQUI'));
+}
+
+const Nuvem = {
+  app:null, auth:null, db:null, user:null, pronto:false,
+  ativo(){ return !!(this.pronto && this.user); },
+  async iniciar(){
+    if(!firebaseConfigurado()) return;
+    try{
+      await Promise.all([
+        carregarScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js'),
+        carregarScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js'),
+        carregarScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js')
+      ]);
+      this.app = firebase.initializeApp(window.FIREBASE_CONFIG);
+      this.auth = firebase.auth(); this.db = firebase.firestore();
+      this.pronto = true;
+      this.auth.onAuthStateChanged(async u => {
+        this.user = u; renderSync();
+        if(u) await this.baixar();
+      });
+    }catch(e){ console.warn('Firebase indisponível', e); }
+  },
+  async baixar(){
+    try{
+      const doc = await this.db.collection('discursos').doc(this.user.uid).get();
+      if(doc.exists){
+        const o = doc.data();
+        if(o.dados){
+          const remoto = JSON.parse(o.dados);
+          DB.discursos = remoto.discursos || DB.discursos;
+          if(remoto.temas?.length){ DB.temas = remoto.temas; DB.temasOrigem = remoto.temasOrigem||null; }
+          localStorage.setItem(CHAVE, JSON.stringify(DB));
+          montarDatalists(); redesenhar(); renderSync();
+          toast('Dados sincronizados');
+        }
+      } else { this.enviar(); }
+    }catch(e){ console.warn(e); }
+  },
+  enviar(){
+    if(!this.ativo()) return;
+    clearTimeout(this._t);
+    this._t = setTimeout(() => {
+      this.db.collection('discursos').doc(this.user.uid).set({
+        dados: JSON.stringify({discursos:DB.discursos, temas:DB.temas, temasOrigem:DB.temasOrigem}),
+        em: Date.now()
+      }).catch(e => console.warn(e));
+    }, 800);
+  }
+};
+function carregarScript(src){
+  return new Promise((res,rej) => {
+    const s = document.createElement('script'); s.src = src;
+    s.onload = res; s.onerror = rej; document.head.appendChild(s);
+  });
+}
+
+function renderSync(){
+  const a = $('#areaSync');
+  if(!firebaseConfigurado()){
+    a.innerHTML = `<p style="font-size:.9em;color:var(--mut)">
+      A sincronização ainda não está configurada. Preencha os dados do seu projeto em
+      <b>window.FIREBASE_CONFIG</b>, no início do index.html, para liberar aqui o login
+      por e-mail e senha e a sincronização entre aparelhos.</p>`;
+    return;
+  }
+  if(!Nuvem.pronto){ a.innerHTML = `<p style="font-size:.9em;color:var(--mut)">Conectando…</p>`; return; }
+  if(Nuvem.user){
+    a.innerHTML = `
+      <p style="font-size:.9em;margin-bottom:10px">Conectado como <b>${esc(Nuvem.user.email)}</b>.
+      ${DB.temas.length ? 'A lista de temas está guardada na sua conta.' : 'Envie o PDF para guardar a lista na conta.'}</p>
+      <button class="btn z bloco" id="btSair">Sair da conta</button>`;
+    $('#btSair').onclick = () => Nuvem.auth.signOut();
+  } else {
+    a.innerHTML = `
+      <div class="campo"><label>E-mail</label><input type="email" id="lgEmail"></div>
+      <div class="campo"><label>Senha</label><input type="password" id="lgSenha"></div>
+      <div class="acoes">
+        <button class="btn" id="btEntrar">Entrar</button>
+        <button class="btn g" id="btCriar">Criar conta</button>
+      </div>`;
+    const cred = () => [$('#lgEmail').value.trim(), $('#lgSenha').value];
+    $('#btEntrar').onclick = () => Nuvem.auth.signInWithEmailAndPassword(...cred())
+      .then(()=>toast('Conectado')).catch(e=>toast(e.message));
+    $('#btCriar').onclick = () => Nuvem.auth.createUserWithEmailAndPassword(...cred())
+      .then(()=>toast('Conta criada')).catch(e=>toast(e.message));
+  }
+}
+
+/* ------------------------------ voltar do Android ------------------------------ */
+(function(){
+  history.replaceState({tela:'inicio'}, '', '#inicio');
+  let saindo = 0;
+  window.addEventListener('popstate', () => {
+    const modal = $('#modal');
+    if(modal.classList.contains('on')){ modal.classList.remove('on'); history.pushState({},''); return; }
+    const modalCal = $('#modalCal');
+    if(modalCal.classList.contains('on')){ modalCal.classList.remove('on'); history.pushState({},''); return; }
+    const aberto = document.querySelector('.painelSub.on');
+    if(aberto){ aberto.classList.remove('on'); history.pushState({},''); return; }
+    const atual = $('section[data-tela].on')?.dataset.tela;
+    if(atual !== 'inicio'){ ir('inicio'); history.pushState({tela:'inicio'},''); return; }
+    if(Date.now() - saindo < 2000) return;
+    saindo = Date.now();
+    toast('Toque em voltar de novo para sair');
+    history.pushState({tela:'inicio'},'');
+  });
+})();
+
+/* ------------------------------ arranque ------------------------------ */
+carregar();
+montarFontes();
+montarPaletas();
+aplicarAparencia();
+montarDatalists();
+$('#fModelo').value = DB.ajustes.modelo;
+$('#fData').value = new Date().toISOString().slice(0,10);
+renderAgenda();
+renderStatusTemas();
+Nuvem.iniciar();
+renderSync();
+
+/* ------------------------------ PWA: service worker ------------------------------ */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW falhou', e));
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+rules_version = '2';
+
+// Regras de segurança do Firestore para o app "Discursos Públicos · Oradores".
+// Cada usuário só pode ler e escrever o próprio documento, guardado em:
+//   /discursos/{uid}
+// onde {uid} é o ID do usuário autenticado (login por e-mail/senha).
+//
+// Como aplicar:
+//   1) Console do Firebase → Firestore Database → aba "Regras"
+//   2) Apague o conteúdo atual e cole o conteúdo deste arquivo
+//   3) Clique em "Publicar"
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /discursos/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Bloqueia qualquer outra coleção/documento por padrão.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
