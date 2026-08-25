@@ -3,7 +3,7 @@
    plano. Suba uma versão nova do CACHE_NOME sempre que trocar arquivos
    estáticos (index.html, ícones) para forçar os aparelhos a atualizarem. */
 
-const CACHE_NOME = 'discursos-v2';
+const CACHE_NOME = 'discursos-v5';
 const ARQUIVOS = [
   './',
   './index.html',

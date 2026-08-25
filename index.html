@@ -218,6 +218,49 @@ nav button.on{color:rgb(var(--ac))}
 .calGrid button.semSel{background:rgba(var(--ac),.14)}
 .calGrid button.temDisc::after{content:"";position:absolute;left:50%;bottom:4px;transform:translateX(-50%);
   width:5px;height:5px;border-radius:50%;background:rgb(var(--ac))}
+
+/* ---------- impressão: programação para exportar ---------- */
+#areaImpressao{display:none}
+.folhaImp{font-family:'Nunito',sans-serif;color:#14181B;font-size:13px}
+.folhaImp .cabecTop{display:flex;align-items:center;gap:12px;border-bottom:2px solid rgb(var(--ac));padding-bottom:10px;margin-bottom:4px}
+.folhaImp .selo{width:40px;height:40px;border-radius:11px;border:2px solid rgb(var(--ac));display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.folhaImp .selo svg{width:22px;height:22px;color:rgb(var(--ac))}
+.folhaImp .capStack{flex:1}
+.folhaImp .capTitulo{font-family:'Caveat',cursive;font-size:1.9em;font-weight:700;line-height:1}
+.folhaImp .capTitulo b{color:rgb(var(--ac))}
+.folhaImp .capSub{font-size:.82em;color:#555;font-weight:700}
+.folhaImp .periodo{text-align:right;font-size:.8em;color:#555}
+.folhaImp .mesTit{font-weight:800;font-size:1.15em;color:rgb(var(--ac));margin:16px 0 8px;padding-bottom:3px;
+  border-bottom:1px solid rgb(var(--ac))}
+.folhaImp .itemD{border-left:3px solid rgb(var(--ac));padding:6px 0 6px 10px;margin-bottom:9px;
+  page-break-inside:avoid;display:flex;gap:10px}
+.folhaImp .itemD .dt{flex:0 0 52px;text-align:center}
+.folhaImp .itemD .dt b{display:block;font-size:1.1em}
+.folhaImp .itemD .dt span{display:block;font-size:.72em;color:#666;text-transform:uppercase}
+.folhaImp .itemD .corpo{flex:1;border-left:1px solid #ddd;padding-left:10px}
+.folhaImp .itemD .nomeOr{font-weight:800;font-size:1.03em}
+.folhaImp .itemD .congOr{color:#555;font-size:.85em}
+.folhaImp .itemD .temaLin{margin-top:3px;font-size:.92em}
+.folhaImp .itemD .temaLin b{font-weight:800}
+.folhaImp .itemD .metaLin{margin-top:3px;display:flex;gap:6px;flex-wrap:wrap}
+.folhaImp .pill{display:inline-block;border:1px solid #999;border-radius:20px;padding:1px 8px;font-size:.74em;font-weight:700;color:#333}
+.folhaImp .subLin{margin-top:3px;font-size:.78em;color:#666;font-style:italic}
+.folhaImp .rod{margin-top:16px;font-size:.75em;color:#888;text-align:right;border-top:1px solid #ddd;padding-top:6px}
+@media print{
+  body.imprimindo > *:not(#areaImpressao){display:none !important}
+  body.imprimindo{background:#fff !important}
+  body.imprimindo #areaImpressao{display:block !important;padding:12mm}
+  @page{size:A4;margin:0}
+}
+
+/* ---------- modal de seleção pra exportar ---------- */
+.expMes{margin-bottom:14px}
+.expMesHead{display:flex;align-items:center;gap:8px;font-weight:800;padding:6px 0;border-bottom:1px solid var(--line);
+  margin-bottom:4px;cursor:pointer}
+.expItem{display:flex;align-items:flex-start;gap:8px;padding:6px 2px;font-size:.92em;cursor:pointer}
+.expItem b{font-weight:800}
+.expItem .cg{color:var(--mut);display:block;font-size:.86em}
+.expItem input, .expMesHead input{margin-top:3px;width:17px;height:17px;accent-color:rgb(var(--ac));flex:0 0 auto}
 </style>
 </head>
 <body>
@@ -246,6 +289,10 @@ nav button.on{color:rgb(var(--ac))}
     </div>
     <div class="semana" id="semana"></div>
 
+    <button class="btn g bloco" id="btImprimirMes" type="button" style="margin-bottom:16px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M6 9V3h12v6"/><path d="M6 18H4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2"/><path d="M6 14h12v7H6z"/></svg>
+      Exportar programação (PDF)
+    </button>
     <h2 class="tit" id="tituloMes">Próximos discursos</h2>
     <p class="sub" id="subMes"></p>
     <div id="listaAgenda"></div>
@@ -334,6 +381,15 @@ nav button.on{color:rgb(var(--ac))}
   <section data-tela="ajustes">
     <h2 class="tit">Ajustes</h2>
     <p class="sub">Aparência, lembretes e sincronização.</p>
+
+    <div class="rot">Impressão</div>
+    <div class="cartao">
+      <div class="campo" style="margin-bottom:0">
+        <label>Nome da congregação</label>
+        <input type="text" id="fNomeCong" placeholder="ex.: Congregação Central">
+      </div>
+      <p style="font-size:.8em;color:var(--mut);margin-top:8px">Aparece no topo do quadro impresso.</p>
+    </div>
 
     <div class="rot">Aparência</div>
     <div class="cartao">
@@ -450,6 +506,23 @@ nav button.on{color:rgb(var(--ac))}
   </div>
 </div>
 
+<div class="modal" id="modalExport">
+  <div class="modalIn">
+    <h3>Exportar programação</h3>
+    <p class="q">Marque as datas que quer no PDF — o mês atual já vem marcado.</p>
+    <label class="expMesHead" style="border-bottom:2px solid var(--line)">
+      <input type="checkbox" id="expTodos"> Selecionar tudo
+    </label>
+    <div id="expLista"></div>
+    <div class="acoes" style="margin-top:6px">
+      <button class="btn bloco" id="expGerar">Gerar PDF</button>
+      <button class="btn z bloco" id="expFechar">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div id="areaImpressao"></div>
+
 <script>
 /* ==========================================================================
    Discursos Públicos · Oradores
@@ -506,7 +579,7 @@ let DB = {
   temasOrigem: null,
   ajustes: {
     escuro:0, paleta:'laranja', fonte:'Nunito', tam:16,
-    l7:1, l3:1, modelo:MODELO_PADRAO
+    l7:1, l3:1, modelo:MODELO_PADRAO, nomeCong:''
   },
   avisados: {}
 };
@@ -569,7 +642,7 @@ function carregar(){
     if(b){
       const o = JSON.parse(b);
       DB = Object.assign(DB, o);
-      DB.ajustes = Object.assign({escuro:0,paleta:'laranja',fonte:'Nunito',tam:16,l7:1,l3:1,modelo:MODELO_PADRAO}, o.ajustes||{});
+      DB.ajustes = Object.assign({escuro:0,paleta:'laranja',fonte:'Nunito',tam:16,l7:1,l3:1,modelo:MODELO_PADRAO,nomeCong:''}, o.ajustes||{});
       DB.avisados = o.avisados||{};
     }
   }catch(e){}
@@ -1249,6 +1322,143 @@ $('#btMais').onclick = () => { DB.ajustes.tam = Math.min(24, DB.ajustes.tam + 1)
 $('#btMenos').onclick = () => { DB.ajustes.tam = Math.max(13, DB.ajustes.tam - 1); salvar(); aplicarAparencia(); };
 $('#btSalvarModelo').onclick = () => { DB.ajustes.modelo = $('#fModelo').value; salvar(); toast('Modelo salvo'); };
 $('#btModeloPadrao').onclick = () => { $('#fModelo').value = MODELO_PADRAO; DB.ajustes.modelo = MODELO_PADRAO; salvar(); toast('Modelo restaurado'); };
+$('#fNomeCong').addEventListener('change', () => { DB.ajustes.nomeCong = $('#fNomeCong').value.trim(); salvar(); });
+
+/* ------------------------------ exportar programação (PDF) ------------------------------ */
+const DIAS_ABREV = ['dom','seg','ter','qua','qui','sex','sáb'];
+const MESES_NOME = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const chaveMes = data => data.slice(0,7); // 'AAAA-MM'
+
+function abrirExportar(){
+  const hj = chaveISO(hoje0());
+  const mesAtual = chaveMes(hj);
+  const futuros = DB.discursos
+    .filter(d => d.data && d.data >= (mesAtual + '-01'))
+    .sort((a,b) => a.data.localeCompare(b.data));
+
+  if(!futuros.length){ toast('Nenhum discurso a partir deste mês'); return; }
+
+  const grupos = {};
+  futuros.forEach(d => { const k = chaveMes(d.data); (grupos[k] = grupos[k] || []).push(d); });
+
+  $('#expLista').innerHTML = Object.keys(grupos).sort().map(k => {
+    const [a,m] = k.split('-').map(Number);
+    const itens = grupos[k].map(d => {
+      const dd = dISO(d.data);
+      return `<label class="expItem">
+        <input type="checkbox" class="expChk" data-id="${d.id}" data-mes="${k}" ${k===mesAtual?'checked':''}>
+        <span><b>${String(dd.getDate()).padStart(2,'0')}/${String(dd.getMonth()+1).padStart(2,'0')}</b> — ${esc(d.nome||'Orador não definido')}
+        ${d.cong ? `<span class="cg">${esc(d.cong)}</span>` : ''}</span>
+      </label>`;
+    }).join('');
+    return `<div class="expMes">
+      <label class="expMesHead"><input type="checkbox" class="expChkMes" data-mes="${k}" ${k===mesAtual?'checked':''}>
+        ${MESES_NOME[m-1].charAt(0).toUpperCase()+MESES_NOME[m-1].slice(1)} de ${a}</label>
+      ${itens}
+    </div>`;
+  }).join('');
+
+  atualizarExpTodos();
+  $('#modalExport').classList.add('on');
+  history.pushState({}, '');
+}
+function fecharExportar(){ $('#modalExport').classList.remove('on'); }
+
+function atualizarExpTodos(){
+  const chks = $$('.expChk');
+  $('#expTodos').checked = chks.length > 0 && chks.every(c => c.checked);
+}
+
+document.addEventListener('change', e => {
+  if(e.target.id === 'expTodos'){
+    $$('.expChk, .expChkMes').forEach(c => c.checked = e.target.checked);
+    return;
+  }
+  if(e.target.classList.contains('expChkMes')){
+    const mes = e.target.dataset.mes;
+    $$(`.expChk[data-mes="${mes}"]`).forEach(c => c.checked = e.target.checked);
+    atualizarExpTodos();
+    return;
+  }
+  if(e.target.classList.contains('expChk')){
+    const mes = e.target.dataset.mes;
+    const doMes = $$(`.expChk[data-mes="${mes}"]`);
+    $(`.expChkMes[data-mes="${mes}"]`).checked = doMes.every(c => c.checked);
+    atualizarExpTodos();
+  }
+});
+
+$('#btImprimirMes').onclick = abrirExportar;
+$('#expFechar').onclick = fecharExportar;
+$('#modalExport').onclick = e => { if(e.target.id === 'modalExport') fecharExportar(); };
+
+$('#expGerar').onclick = () => {
+  const ids = $$('.expChk:checked').map(c => c.dataset.id);
+  if(!ids.length){ toast('Marque ao menos uma data'); return; }
+  const selecionados = DB.discursos
+    .filter(d => ids.includes(d.id))
+    .sort((a,b) => a.data.localeCompare(b.data));
+  gerarPdf(selecionados);
+  fecharExportar();
+};
+
+function iconeSelo(){
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="4.2" r="2.2"/><path d="M8.3 10.5a3.7 3.7 0 0 1 7.4 0"/>
+    <path d="M12 8.3v4.2"/><path d="M5.5 12.7h13"/><path d="M8.3 12.7 7 20"/><path d="M15.7 12.7 17 20"/>
+  </svg>`;
+}
+
+function gerarPdf(lista){
+  const cong = (DB.ajustes.nomeCong || '').trim();
+  const grupos = {};
+  lista.forEach(d => { const k = chaveMes(d.data); (grupos[k] = grupos[k] || []).push(d); });
+  const chaves = Object.keys(grupos).sort();
+
+  const primeiro = dISO(lista[0].data), ultimo = dISO(lista[lista.length-1].data);
+  const periodo = chaveMes(lista[0].data) === chaveMes(lista[lista.length-1].data)
+    ? `${MESES_NOME[primeiro.getMonth()]} de ${primeiro.getFullYear()}`
+    : `${MESES_NOME[primeiro.getMonth()]}/${primeiro.getFullYear()} a ${MESES_NOME[ultimo.getMonth()]}/${ultimo.getFullYear()}`;
+
+  const blocosMes = chaves.map(k => {
+    const [a,m] = k.split('-').map(Number);
+    const itens = grupos[k].map(d => {
+      const dd = dISO(d.data);
+      const chips = [];
+      if(d.cantico) chips.push(`<span class="pill">Cântico ${esc(d.cantico)}</span>`);
+      return `<div class="itemD">
+        <div class="dt"><b>${String(dd.getDate()).padStart(2,'0')}</b><span>${DIAS_ABREV[dd.getDay()]}</span></div>
+        <div class="corpo">
+          <div class="nomeOr">${esc(d.nome || 'Orador não definido')}</div>
+          ${d.cong ? `<div class="congOr">${esc(d.cong)}</div>` : ''}
+          <div class="temaLin">${d.num ? `<b>Nº ${esc(d.num)}</b> — ` : ''}${esc(d.tema || 'Tema não informado')}</div>
+          ${chips.length ? `<div class="metaLin">${chips.join('')}</div>` : ''}
+          ${d.sub?.nome ? `<div class="subLin">Substituto: ${esc(d.sub.nome)}${d.sub.cong ? ' — '+esc(d.sub.cong) : ''}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="mesTit">${MESES_NOME[m-1].charAt(0).toUpperCase()+MESES_NOME[m-1].slice(1)} de ${a}</div>${itens}`;
+  }).join('');
+
+  $('#areaImpressao').innerHTML = `
+    <div class="folhaImp">
+      <div class="cabecTop">
+        <div class="selo">${iconeSelo()}</div>
+        <div class="capStack">
+          <div class="capTitulo">Discursos <b>Públicos</b></div>
+          ${cong ? `<div class="capSub">${esc(cong)}</div>` : ''}
+        </div>
+        <div class="periodo">${periodo}</div>
+      </div>
+      ${blocosMes}
+      <div class="rod">Gerado em ${new Date().toLocaleDateString('pt-BR')}</div>
+    </div>`;
+
+  document.body.classList.add('imprimindo');
+  setTimeout(() => window.print(), 50);
+}
+
+window.addEventListener('afterprint', () => document.body.classList.remove('imprimindo'));
 
 $('#btExportar').onclick = () => {
   const b = new Blob([JSON.stringify(DB, null, 2)], {type:'application/json'});
@@ -1284,12 +1494,12 @@ $('#semHoje').onclick = () => { refSemana = domingoDe(hoje0()); diaFiltro = null
    (guardando tudo em localStorage), sem sincronização.
 ------------------------------------------------------------------------ */
 window.FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDXIPDlAXWmUTCN_JbfMTWxr0gYEbfwWes",
-  authDomain: "discurso-publico-62e6b.firebaseapp.com",       // ex.: seu-projeto.firebaseapp.com
-  projectId: "discurso-publico-62e6b",
-  storageBucket: "discurso-publico-62e6b.firebasestorage.app", // ex.: seu-projeto.appspot.com
-  messagingSenderId: "639981982306",
-  appId: "1:639981982306:web:300e0ded5bfaf8f19d373b"
+  apiKey: "COLE_AQUI_A_apiKey",
+  authDomain: "COLE_AQUI_O_authDomain",       // ex.: seu-projeto.firebaseapp.com
+  projectId: "COLE_AQUI_O_projectId",
+  storageBucket: "COLE_AQUI_O_storageBucket", // ex.: seu-projeto.appspot.com
+  messagingSenderId: "COLE_AQUI_O_messagingSenderId",
+  appId: "COLE_AQUI_O_appId"
 };
 // Antes de usar, ative no Console do Firebase:
 //  1) Authentication → Sign-in method → E-mail/senha (ativar)
@@ -1396,6 +1606,8 @@ function renderSync(){
     if(modal.classList.contains('on')){ modal.classList.remove('on'); history.pushState({},''); return; }
     const modalCal = $('#modalCal');
     if(modalCal.classList.contains('on')){ modalCal.classList.remove('on'); history.pushState({},''); return; }
+    const modalExport = $('#modalExport');
+    if(modalExport.classList.contains('on')){ modalExport.classList.remove('on'); history.pushState({},''); return; }
     const aberto = document.querySelector('.painelSub.on');
     if(aberto){ aberto.classList.remove('on'); history.pushState({},''); return; }
     const atual = $('section[data-tela].on')?.dataset.tela;
@@ -1414,6 +1626,7 @@ montarPaletas();
 aplicarAparencia();
 montarDatalists();
 $('#fModelo').value = DB.ajustes.modelo;
+$('#fNomeCong').value = DB.ajustes.nomeCong || '';
 $('#fData').value = new Date().toISOString().slice(0,10);
 renderAgenda();
 renderStatusTemas();
