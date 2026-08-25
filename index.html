@@ -247,9 +247,20 @@ nav button.on{color:rgb(var(--ac))}
 .folhaImp .subLin{margin-top:3px;font-size:.78em;color:#666;font-style:italic}
 .folhaImp .rod{margin-top:16px;font-size:.75em;color:#888;text-align:right;border-top:1px solid #ddd;padding-top:6px}
 @media print{
+  /* o seletor ">" nao alcanca pseudo-elementos: sem isto a textura
+     de listras (body::before, opacity:.6) vira um veu branco sobre a folha */
+  body.imprimindo::before,
+  body.imprimindo::after{content:none !important;display:none !important;background:none !important;opacity:0 !important}
+
   body.imprimindo > *:not(#areaImpressao){display:none !important}
-  body.imprimindo{background:#fff !important}
+  html, body.imprimindo{background:#fff !important}
   body.imprimindo #areaImpressao{display:block !important;padding:12mm}
+
+  /* garante que barras de acento, chips e bordas coloridas nao sejam descartadas */
+  #areaImpressao, #areaImpressao *{
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
+  }
   @page{size:A4;margin:0}
 }
 
@@ -1495,9 +1506,9 @@ $('#semHoje').onclick = () => { refSemana = domingoDe(hoje0()); diaFiltro = null
 ------------------------------------------------------------------------ */
 window.FIREBASE_CONFIG = {
   apiKey: "AIzaSyDXIPDlAXWmUTCN_JbfMTWxr0gYEbfwWes",
-  authDomain: "discurso-publico-62e6b.firebaseapp.com",       // ex.: seu-projeto.firebaseapp.com
+  authDomain: "discurso-publico-62e6b.firebaseapp.com",
   projectId: "discurso-publico-62e6b",
-  storageBucket: "discurso-publico-62e6b.firebasestorage.app", // ex.: seu-projeto.appspot.com
+  storageBucket: "discurso-publico-62e6b.firebasestorage.app",
   messagingSenderId: "639981982306",
   appId: "1:639981982306:web:300e0ded5bfaf8f19d373b"
 };
